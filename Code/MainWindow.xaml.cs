@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Code.View;
+using System.Windows;
 
 namespace Code
 {
@@ -10,6 +11,12 @@ namespace Code
         public MainWindow()
         {
             InitializeComponent();
+            MainFrame.Navigate(new DefaultView());
+        }
+
+        private void Button_CustomerStats_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new CustomerStatsView());
         }
     }
 }
