@@ -23,7 +23,6 @@
         </Grid.ColumnDefinitions>
 
         <DataGrid
-            Name="CustomerDataGrid"
             Grid.Column="0"
             Margin="5"
             AlternatingRowBackground="LightGray"
@@ -37,7 +36,6 @@
             SelectionMode="Single" />
 
         <lvc:PieChart
-            Name="CustomerPieChart"
             Grid.Column="1"
             Margin="5"
             Background="#f0f0f0"

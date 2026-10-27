@@ -1,9 +1,13 @@
 ﻿using Code.Model.Utility;
+using Code.Utility;
 using Code.View.Utility;
 using Code.ViewModel.Utility;
 using CommunityToolkit.Mvvm.ComponentModel;
 using LiveCharts;
+using LiveCharts.Wpf;
+using Microsoft.Data.Sqlite;
 using System.Data;
+using System.Windows;
 
 namespace Code.ViewModel
 {
@@ -25,7 +29,11 @@ namespace Code.ViewModel
                     CustomerCriteria: (optionsBox.DataContext as CustomerBoxViewModel)!.CustomerCriteria,
                     QueryRange: (optionsBox.DataContext as CustomerBoxViewModel)!.QueryRange);
             }
-            else throw new Exception("[UNREACHABLE] Cannot get data from user.");
+            else
+            {
+                MessageBox.Show("Couldn't get selection criteria.", "Error.", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+                throw new Exception("Couldn't get selection criteria");
+            }
 
             HandleChoice(_selectedCriteria);
         }
@@ -35,19 +43,84 @@ namespace Code.ViewModel
             switch (boxResult.CustomerCriteria)
             {
                 case CustomerCriteriaEnum.MinRevenue:
+                    string queryMin = @$"
+                        SELECT 
+	                        customers.customer_unique_id AS CustomerID,
+	                        ROUND(SUM(order_payments.payment_value),2) AS Revenue
+                        FROM customers
+                        INNER JOIN orders USING (customer_id)
+                        INNER JOIN order_payments USING (order_id)
+                        GROUP BY customers.customer_unique_id
+                        HAVING Revenue > 0.0
+                        ORDER BY Revenue ASC
+                        LIMIT {_selectedCriteria.QueryRange};                   
+                    ";
+                    QueryDatabase(queryMin);
                     break;
                 case CustomerCriteriaEnum.MaxRevenue:
+                    string queryMax = @$"
+                        SELECT 
+	                        customers.customer_unique_id AS CustomerID,
+	                        ROUND(SUM(order_payments.payment_value),2) AS Revenue
+                        FROM customers
+                        INNER JOIN orders USING (customer_id)
+                        INNER JOIN order_payments USING (order_id)
+                        GROUP BY customers.customer_unique_id
+                        HAVING Revenue > 0.0
+                        ORDER BY Revenue DESC
+                        LIMIT {_selectedCriteria.QueryRange};     
+                    ";
+                    QueryDatabase(queryMax);
                     break;
                 case CustomerCriteriaEnum.None:
                 default:
-                    //User closed the box wihot choosing an option (the X button)
                     return;
+            }
+        }
+
+        private void QueryDatabase(string query)
+        {
+            using (var conn = new SqliteConnection(DatabaseConnectionString.ConnectionString))
+            {
+                conn.Open();
+
+                using (var cmd = new SqliteCommand(query, conn))
+                {
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        DataTable dt = new DataTable();
+                        dt.Load(reader);
+                        QueryData = dt.DefaultView;
+
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            _totalRevenue += Convert.ToDouble(row["Revenue"]);
+                        }
+                    }
+                }
             }
         }
 
         partial void OnSelectedDataChanged(DataRowView value)
         {
-            throw new NotImplementedException();
+            SeriesCollection pieChartData = new SeriesCollection();
+            DataRow currentRow = value.Row;
+
+            pieChartData.Add(new PieSeries
+            {
+                Title = "Selected customer",
+                Values = new ChartValues<double> { Convert.ToDouble(currentRow["Revenue"]) },
+                DataLabels = true,
+            });
+
+            pieChartData.Add(new PieSeries
+            {
+                Title = "Total batch revenue",
+                Values = new ChartValues<double> { Math.Round(_totalRevenue - Convert.ToDouble(currentRow["Revenue"]), 2) },
+                DataLabels = true
+            });
+
+            PieChartData = pieChartData;
         }
     }
 }
