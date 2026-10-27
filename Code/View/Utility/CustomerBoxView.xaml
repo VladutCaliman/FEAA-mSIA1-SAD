@@ -1,0 +1,94 @@
+﻿<Window
+    x:Class="Code.View.Utility.CustomerBoxView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Code.View.Utility"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:util="clr-namespace:Code.Utility"
+    xmlns:vmu="clr-namespace:Code.ViewModel.Utility"
+    Title="CustomerBoxView"
+    Width="250"
+    Height="300"
+    ResizeMode="NoResize"
+    mc:Ignorable="d">
+
+    <Window.DataContext>
+        <vmu:CustomerBoxViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+        <util:EnumToBooleanConverter x:Key="EnumToBoolConverter" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Border
+            Grid.Column="0"
+            Margin="10"
+            Background="White"
+            BorderBrush="Black"
+            BorderThickness="1"
+            CornerRadius="5">
+
+            <StackPanel
+                Margin="20"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center">
+
+                <RadioButton
+                    Margin="0,0,0,10"
+                    Content="Max revenue"
+                    IsChecked="{Binding CustomerCriteria, Mode=TwoWay, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static vmu:CustomerCriteriaEnum.MaxRevenue}}" />
+                <RadioButton
+                    Margin="0,0,0,10"
+                    Content="Min revenue"
+                    IsChecked="{Binding CustomerCriteria, Mode=TwoWay, Converter={StaticResource EnumToBoolConverter}, ConverterParameter={x:Static vmu:CustomerCriteriaEnum.MinRevenue}}" />
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Slider
+                        Grid.Column="0"
+                        IsSnapToTickEnabled="True"
+                        Maximum="100"
+                        Minimum="10"
+                        TickFrequency="1"
+                        Value="{Binding QueryRange, Mode=TwoWay}" />
+
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="0,0,0,10"
+                        HorizontalAlignment="Center"
+                        Text="{Binding QueryRange}" />
+
+
+                </Grid>
+
+                <Separator
+                    Height="1"
+                    Margin="0,0,0,10"
+                    Background="Black" />
+
+                <Button
+                    Name="GenerateReportButton"
+                    Width="150"
+                    Height="30"
+                    Margin="0,0,0,10"
+                    Click="GenerateReportButton_Click"
+                    Content="Generate Report"
+                    IsEnabled="{Binding IsCriteriaSelected}" />
+
+            </StackPanel>
+
+        </Border>
+
+
+    </Grid>
+</Window>

@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace Code.Utility
 {
-    internal sealed class EnumToBoolConvertor : IValueConverter
+    internal sealed class EnumToBooleanConverter : IValueConverter
     {
         public object Convert(
             object value,
