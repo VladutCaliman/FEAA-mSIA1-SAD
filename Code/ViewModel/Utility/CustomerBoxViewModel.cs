@@ -7,6 +7,8 @@ namespace Code.ViewModel.Utility
         None,
         MaxRevenue,
         MinRevenue,
+        MaxOrders,
+        MinOrders,
     }
 
     internal sealed partial class CustomerBoxViewModel : ObservableObject

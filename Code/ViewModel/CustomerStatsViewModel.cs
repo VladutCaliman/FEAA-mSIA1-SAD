@@ -13,9 +13,9 @@ namespace Code.ViewModel
 {
     internal sealed partial class CustomerStatsViewModel : ObservableObject
     {
-        [ObservableProperty] private DataView _queryData;
-        [ObservableProperty] private SeriesCollection _pieChartData;
-        [ObservableProperty] private DataRowView _selectedData;
+        [ObservableProperty] private DataView? _queryData;
+        [ObservableProperty] private SeriesCollection? _pieChartData;
+        [ObservableProperty] private DataRowView? _selectedData;
 
         private CustomerBoxResult _selectedCriteria;
         private double _totalRevenue;
@@ -43,9 +43,10 @@ namespace Code.ViewModel
             switch (boxResult.CustomerCriteria)
             {
                 case CustomerCriteriaEnum.MinRevenue:
-                    string queryMin = @$"
-                        SELECT 
-	                        customers.customer_unique_id AS CustomerID,
+                    string queryMinRev = @$"
+                        SELECT
+                            customers.first_name AS FirstName,
+                            customers.last_name AS LastName,
 	                        ROUND(SUM(order_payments.payment_value),2) AS Revenue
                         FROM customers
                         INNER JOIN orders USING (customer_id)
@@ -53,14 +54,14 @@ namespace Code.ViewModel
                         GROUP BY customers.customer_unique_id
                         HAVING Revenue > 0.0
                         ORDER BY Revenue ASC
-                        LIMIT {_selectedCriteria.QueryRange};                   
-                    ";
-                    QueryDatabase(queryMin);
+                        LIMIT {_selectedCriteria.QueryRange};";
+                    QueryDatabase(queryMinRev);
                     break;
                 case CustomerCriteriaEnum.MaxRevenue:
-                    string queryMax = @$"
+                    string queryMaxRev = @$"
                         SELECT 
-	                        customers.customer_unique_id AS CustomerID,
+                            customers.first_name AS FirstName,
+                            customers.last_name AS LastName,
 	                        ROUND(SUM(order_payments.payment_value),2) AS Revenue
                         FROM customers
                         INNER JOIN orders USING (customer_id)
@@ -68,9 +69,38 @@ namespace Code.ViewModel
                         GROUP BY customers.customer_unique_id
                         HAVING Revenue > 0.0
                         ORDER BY Revenue DESC
-                        LIMIT {_selectedCriteria.QueryRange};     
-                    ";
-                    QueryDatabase(queryMax);
+                        LIMIT {_selectedCriteria.QueryRange};";
+                    QueryDatabase(queryMaxRev);
+                    break;
+                case CustomerCriteriaEnum.MinOrders:
+                    string queryMinOrd = $@"
+                        SELECT
+                            customers.first_name AS FirstName,
+                            customers.last_name AS LastName,
+                            ROUND(SUM(order_payments.payment_value),2) AS Revenue,
+                            COUNT(order_id) AS NoOfOrders
+                        FROM customers
+                        INNER JOIN orders USING (customer_id)
+                        INNER JOIN order_payments USING (order_id)
+                        GROUP BY customers.customer_unique_id
+                        ORDER BY NoOfOrders ASC
+                        LIMIT {_selectedCriteria.QueryRange};";
+                    QueryDatabase(queryMinOrd);
+                    break;
+                case CustomerCriteriaEnum.MaxOrders:
+                    string queryMaxOrd = $@"
+                        SELECT
+                            customers.first_name AS FirstName,
+                            customers.last_name AS LastName,
+                            ROUND(SUM(order_payments.payment_value),2) AS Revenue,
+                            COUNT(order_id) AS NoOfOrders
+                        FROM customers
+                        INNER JOIN orders USING (customer_id)
+                        INNER JOIN order_payments USING (order_id)
+                        GROUP BY customers.customer_unique_id
+                        ORDER BY NoOfOrders DESC
+                        LIMIT {_selectedCriteria.QueryRange};";
+                    QueryDatabase(queryMaxOrd);
                     break;
                 case CustomerCriteriaEnum.None:
                 default:
@@ -101,14 +131,14 @@ namespace Code.ViewModel
             }
         }
 
-        partial void OnSelectedDataChanged(DataRowView value)
+        partial void OnSelectedDataChanged(DataRowView? value)
         {
             SeriesCollection pieChartData = new SeriesCollection();
-            DataRow currentRow = value.Row;
+            DataRow currentRow = value!.Row;
 
             pieChartData.Add(new PieSeries
             {
-                Title = "Selected customer",
+                Title = $"{currentRow["FirstName"]} {currentRow["LastName"]}",
                 Values = new ChartValues<double> { Convert.ToDouble(currentRow["Revenue"]) },
                 DataLabels = true,
             });

@@ -37,6 +37,27 @@
                         Click="Button_CustomerStats_Click"
                         Content="Customer Statistics" />
 
+                    <Button
+                        Width="150"
+                        Height="30"
+                        Margin="0,0,0,10"
+                        Click="Button_CashflowEstim_Click"
+                        Content="Cashflow Estimation" />
+
+                    <Button
+                        Width="150"
+                        Height="30"
+                        Margin="0,0,0,10"
+                        Click="Button_RegionDistrib_Click"
+                        Content="Region Distribution" />
+
+                    <Button
+                        Width="150"
+                        Height="30"
+                        Margin="0,0,0,10"
+                        Click="Button_PaymentMethod_Click"
+                        Content="Payment Method" />
+
                 </StackPanel>
             </ScrollViewer>
         </Border>

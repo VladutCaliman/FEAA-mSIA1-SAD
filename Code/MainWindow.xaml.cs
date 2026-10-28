@@ -15,8 +15,15 @@ namespace Code
         }
 
         private void Button_CustomerStats_Click(object sender, RoutedEventArgs e)
-        {
-            MainFrame.Navigate(new CustomerStatsView());
-        }
+            => MainFrame.Navigate(new CustomerStatsView());
+
+        private void Button_CashflowEstim_Click(object sender, RoutedEventArgs e)
+            => MainFrame.Navigate(new CashflowEstimView());
+
+        private void Button_RegionDistrib_Click(object sender, RoutedEventArgs e)
+            => MainFrame.Navigate(new RegionDistribView());
+
+        private void Button_PaymentMethod_Click(object sender, RoutedEventArgs e)
+            => MainFrame.Navigate(new PaymentMethodView());
     }
 }
