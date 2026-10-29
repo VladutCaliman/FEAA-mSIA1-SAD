@@ -25,5 +25,8 @@ namespace Code
 
         private void Button_PaymentMethod_Click(object sender, RoutedEventArgs e)
             => MainFrame.Navigate(new PaymentMethodView());
+
+        private void Button_DeliSatisCor_Click(object sender, RoutedEventArgs e)
+            => MainFrame.Navigate(new DeliSatisCorView());
     }
 }

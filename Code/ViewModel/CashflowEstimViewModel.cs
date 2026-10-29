@@ -65,14 +65,12 @@ namespace Code.ViewModel
                 }
             }
 
-            //todo: estimation
-
             MonthLables = concreteMonths;
             LineChartData = new SeriesCollection
             {
                 new LineSeries
                 {
-                    Title = "Incasari Istorice",
+                    Title = "Cashflow",
                     Values = concreteCashflow,
                     PointGeometrySize = 10
                 }

@@ -58,6 +58,13 @@
                         Click="Button_PaymentMethod_Click"
                         Content="Payment Method" />
 
+                    <Button
+                        Width="150"
+                        Height="30"
+                        Margin="0,0,0,10"
+                        Click="Button_DeliSatisCor_Click"
+                        Content="Delivery-Satisfaction Cor" />
+
                 </StackPanel>
             </ScrollViewer>
         </Border>
@@ -75,7 +82,5 @@
                 NavigationUIVisibility="Hidden" />
 
         </Border>
-
-
     </Grid>
 </Window>
