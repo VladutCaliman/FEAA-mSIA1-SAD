@@ -28,5 +28,8 @@ namespace Code
 
         private void Button_DeliSatisCor_Click(object sender, RoutedEventArgs e)
             => MainFrame.Navigate(new DeliSatisCorView());
+
+        private void Button_PurchasePatterns_Click(object sender, RoutedEventArgs e)
+            => MainFrame.Navigate(new PurchasePatternsView());
     }
 }

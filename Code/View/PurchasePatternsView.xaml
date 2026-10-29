@@ -1,0 +1,57 @@
+﻿<Page
+    x:Class="Code.View.PurchasePatternsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Code.View"
+    xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Code.ViewModel"
+    Title="PurchasePatternsView"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <vm:PurchasePatternsViewModel />
+    </Page.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <DataGrid
+            Grid.Row="0"
+            MaxHeight="250"
+            Margin="15"
+            AlternatingRowBackground="WhiteSmoke"
+            AutoGenerateColumns="True"
+            BorderBrush="DarkGray"
+            BorderThickness="1"
+            HeadersVisibility="Column"
+            IsReadOnly="True"
+            ItemsSource="{Binding PatternsData}" />
+
+        <lvc:CartesianChart
+            Grid.Row="1"
+            Margin="15,10,15,15"
+            LegendLocation="Top"
+            Series="{Binding ChartData}">
+            <lvc:CartesianChart.AxisX>
+                <lvc:Axis
+                    Title="Hour of Day"
+                    Labels="{Binding HourLabels}"
+                    LabelsRotation="-45">
+                    <lvc:Axis.Separator>
+                        <lvc:Separator Step="1" />
+                    </lvc:Axis.Separator>
+                </lvc:Axis>
+            </lvc:CartesianChart.AxisX>
+            <lvc:CartesianChart.AxisY>
+                <lvc:Axis Title="Total Orders Placed" MinValue="0" />
+            </lvc:CartesianChart.AxisY>
+        </lvc:CartesianChart>
+    </Grid>
+</Page>
