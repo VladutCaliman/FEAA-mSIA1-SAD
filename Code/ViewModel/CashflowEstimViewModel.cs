@@ -65,7 +65,38 @@ namespace Code.ViewModel
                 }
             }
 
-            MonthLables = concreteMonths;
+            double averageTrend = 0;
+            int count = concreteCashflow.Count;
+
+            if (count >= 3)
+            {
+                averageTrend = (concreteCashflow[count - 1] - concreteCashflow[count - 3]) / 2.0;
+            }
+
+            ChartValues<double> predictedCashflow = new ChartValues<double>();
+            List<string> allMonths = new List<string>(concreteMonths);
+
+            for (int i = 0; i < count - 1; i++)
+            {
+                predictedCashflow.Add(double.NaN);
+            }
+
+            predictedCashflow.Add(concreteCashflow.Last());
+
+            DateTime lastMonth = DateTime.Parse(concreteMonths.Last() + "-01");
+            double currentEstimation = concreteCashflow.Last();
+
+            for (int i = 1; i <= PredictionRange; i++)
+            {
+                DateTime nextMonth = lastMonth.AddMonths(i);
+                allMonths.Add(nextMonth.ToString("yyyy-MM"));
+
+                currentEstimation += averageTrend;
+                predictedCashflow.Add(Math.Round(currentEstimation, 2));
+            }
+
+            MonthLables = allMonths;
+
             LineChartData = new SeriesCollection
             {
                 new LineSeries
@@ -73,6 +104,13 @@ namespace Code.ViewModel
                     Title = "Cashflow",
                     Values = concreteCashflow,
                     PointGeometrySize = 10
+                },
+                new LineSeries
+                {
+                    Title = "Estimated",
+                    Values = predictedCashflow,
+                    PointGeometrySize = 10,
+                    StrokeDashArray = new System.Windows.Media.DoubleCollection { 2, 2 }
                 }
             };
         }

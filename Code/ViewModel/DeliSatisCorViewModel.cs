@@ -27,7 +27,7 @@ namespace Code.ViewModel
                         WHEN DeliveryTime <= 10 THEN '6-10 Days'
                         WHEN DeliveryTime <= 15 THEN '11-15 Days'
                         WHEN DeliveryTime <= 20 THEN '16-20 Days'
-                        ELSE 'Peste 20 Days'
+                        ELSE '20+ Days'
                     END AS DeliveryInterval,
                     COUNT(order_id) AS NoOfOrders,
                     ROUND(AVG(review_score), 2) AS MeanScore
